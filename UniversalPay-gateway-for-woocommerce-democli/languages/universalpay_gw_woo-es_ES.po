@@ -1,0 +1,255 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2015-10-12 19:21+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Javier bartolome <jbartolome@kineox.com>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-KeywordsList: _e;__\n"
+"X-Poedit-SearchPath-0: ./..\n"
+"X-Poedit-SearchPathExcluded-0: ./../js\n"
+
+#: class-wc-universalpay-gateway.php:10 class-wc-universalpay-gateway.php:137
+msgid "universalpay"
+msgstr "universalpay"
+
+#: class-wc-universalpay-gateway.php:114
+#, php-format
+msgid "universalpay order completed, code %s"
+msgstr "Order completada en universalpay, código %s"
+
+#: class-wc-universalpay-gateway.php:120
+#, php-format
+msgid "universalpay payment error, code %s"
+msgstr "Error en el pago en universalpay, código %s"
+
+#: class-wc-universalpay-gateway.php:128
+msgid "Enable/Disable"
+msgstr "Activar/desactivar"
+
+#: class-wc-universalpay-gateway.php:130
+msgid "Enable universalpay"
+msgstr "Activar universalpay"
+
+#: class-wc-universalpay-gateway.php:134
+msgid "Title"
+msgstr "Título"
+
+#: class-wc-universalpay-gateway.php:136
+msgid "This title is showed in checkout process."
+msgstr "Este título se mostrará al finalizar la compra"
+
+#: class-wc-universalpay-gateway.php:141
+msgid "Description"
+msgstr "Descripción"
+
+#: class-wc-universalpay-gateway.php:143
+msgid ""
+"Description of the method of payment. Use it to tell the user that it is a "
+"secure system through bank."
+msgstr ""
+"Descripción del método de pago. Úsalo para decirle al usuario que va a usar "
+"un servicio de pago seguro a través de una entidad financiera."
+
+#: class-wc-universalpay-gateway.php:144
+msgid ""
+"Secure payment by credit card. You will be redirected to the secure website "
+"of the bank."
+msgstr ""
+"A continuación cargaremos los métodos de pago posibles. El proceso será "
+"sin abandonar el portal."
+
+#: class-wc-universalpay-gateway.php:147
+msgid "Owner"
+msgstr "Titular"
+
+#: class-wc-universalpay-gateway.php:152
+msgid "Trade name"
+msgstr "Nombre del comercio"
+
+#: class-wc-universalpay-gateway.php:157
+msgid "Trade number"
+msgstr "Número de comercio"
+
+#: class-wc-universalpay-gateway.php:162
+msgid "Terminal number"
+msgstr "Número de terminal"
+
+#: class-wc-universalpay-gateway.php:167
+msgid "Secret key"
+msgstr "Clave secreta de encriptación"
+
+#: class-wc-universalpay-gateway.php:169
+msgid "Encryptation Secret Key."
+msgstr "Clave de encriptación secreta"
+
+#: class-wc-universalpay-gateway.php:173
+msgid "Sort Code"
+msgstr "Código"
+
+#: class-wc-universalpay-gateway.php:176
+msgid "Complete"
+msgstr "Completado"
+
+#: class-wc-universalpay-gateway.php:177
+msgid "SHA1 - Complete Extended"
+msgstr "Firma SHA1 completa y extendida"
+
+#: class-wc-universalpay-gateway.php:183
+msgid "Url"
+msgstr "URL"
+
+#: class-wc-universalpay-gateway.php:186
+msgid "Sermepa"
+msgstr "Sermepa"
+
+#: class-wc-universalpay-gateway.php:187
+msgid "universalpay"
+msgstr "universalpay"
+
+#: class-wc-universalpay-gateway.php:193
+msgid "Test Mode"
+msgstr "Modo de pruebas"
+
+#: class-wc-universalpay-gateway.php:195
+msgid "Enable universalpay test mode."
+msgstr "Activar universalpay en modo de pruebas."
+
+#: class-wc-universalpay-gateway.php:199
+msgid "Payment types allowed"
+msgstr "Tipos de pago permitidos"
+
+#: class-wc-universalpay-gateway.php:201
+msgid "You can choose between iupay and credit cards or only credit cards."
+msgstr ""
+"Puedes elegir entre iupay y tarjetas de crédito o sólo tarjetas de crédito."
+
+#: class-wc-universalpay-gateway.php:205
+msgid "Only credit cards"
+msgstr "Sólo tarjetas de crédito"
+
+#: class-wc-universalpay-gateway.php:206
+msgid "Credit cards and iupay"
+msgstr "Tarjetas de crédito y iupay"
+
+#: class-wc-universalpay-gateway.php:210
+msgid "What to do after payment is done?"
+msgstr "¿Qué hacer tras la realización del pago?"
+
+#: class-wc-universalpay-gateway.php:213
+msgid "Always processing"
+msgstr "Siempre procesando"
+
+#: class-wc-universalpay-gateway.php:214
+msgid ""
+"Pending except if all products are downloadable, in this case it would be "
+"marked as completed"
+msgstr ""
+"Procesando excepto si todos los productos son descargables, en tal caso será "
+"marcada como completada"
+
+#: class-wc-universalpay-gateway.php:215
+msgid ""
+"Pending except if all products are virtual, in this case it would be marked "
+"as completed"
+msgstr ""
+"Procesando excepto si todos los productos son virtuales, en tal caso será "
+"marcada como completada"
+
+#: class-wc-universalpay-gateway.php:216
+msgid ""
+"Pending except if all products are downloadable or virtual, in this case it "
+"would be marked as completed"
+msgstr ""
+"Procesando excepto si todos los productos son descargables o virutales, en "
+"tal caso será marcada como completada"
+
+#: class-wc-universalpay-gateway.php:217
+msgid "Always completed"
+msgstr "Siempre completada"
+
+#: class-wc-universalpay-gateway.php:219
+msgid "After payment, how the order should be marked?"
+msgstr "Tras realizarse el pago, ¿cómo debería marcarse el pedido?"
+
+#: class-wc-universalpay-gateway.php:226
+msgid "universalpay Payment"
+msgstr "Pago a través de universalpay"
+
+#: class-wc-universalpay-gateway.php:227
+msgid "Allows universalpay card payments."
+msgstr "Permitir pagos con tarjetas de crédito universalpay"
+
+#: class-wc-universalpay-gateway.php:232
+msgid "How it works? (video in Spanish)"
+msgstr "¿Cómo funciona? (vídeo en español) "
+
+#: class-wc-universalpay-gateway.php:257
+msgid "You must fill out a title for this gateway"
+msgstr "Debe darle un título a esta pasarela"
+
+#: class-wc-universalpay-gateway.php:258
+msgid "You must fill out a description for this gateway"
+msgstr "Debes darle una descripción a esta pasarela"
+
+#: class-wc-universalpay-gateway.php:259
+msgid "You must fill out who is the owner"
+msgstr "Debe rellenar quién es el titular"
+
+#: class-wc-universalpay-gateway.php:260
+msgid "You must fill out the merchant name"
+msgstr "Debe rellenar el nombre del comercio"
+
+#: class-wc-universalpay-gateway.php:261
+msgid "You must fill out the merchant number"
+msgstr "Debe rellenar el número del comercio"
+
+#: class-wc-universalpay-gateway.php:262
+msgid ""
+"You must fill out the terminal number. If you don not know it, it probably "
+"would be the number: 1"
+msgstr ""
+"Debe rellenar el número del terminal. Si no sabes cuál es, probablemente sea "
+"el número: 1"
+
+#: class-wc-universalpay-gateway.php:263
+msgid "You must fill out the key"
+msgstr "Debes rellenar el código"
+
+#: class-wc-universalpay-gateway.php:272
+msgid ""
+"Thank you for your order, click on the button to pay with universalpay."
+msgstr ""
+"Gracias por su pedido, haga clic en el botón para pagar con universalpay."
+
+#: class-wc-universalpay-gateway.php:303
+msgid ""
+"Thank you for your order. We are now redirecting you to universalpay to "
+"make payment."
+msgstr ""
+"Gracias por su pedido. Estamos redirigiéndole a su banco para llevar a cabo "
+"el pago."
+
+#: class-wc-universalpay-gateway.php:324
+msgid "Pay via universalpay"
+msgstr "Pago a través de universalpay"
+
+#: class-wc-universalpay-gateway.php:324
+msgid "Cancel order &amp; restore cart"
+msgstr "Cancelar pedido &amp; restaurar carrito"
+
+#: class-wc-universalpay-gateway.php:368
+#, php-format
+msgid "Order %s"
+msgstr "Pedido %s"
+
+#: universalpay-gateway-woocommerce.php:43
+msgid "Donate"
+msgstr "Donar"
