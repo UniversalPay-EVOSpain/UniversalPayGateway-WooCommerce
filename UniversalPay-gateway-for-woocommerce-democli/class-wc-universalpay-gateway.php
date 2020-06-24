@@ -28,6 +28,9 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		$this->fondoframe		= $this->get_option( 'fondoframe' );
 		$this->mensaje			= $this->get_option( 'mensaje' );
 		$this->nombre			= $this->get_option( 'nombre' );
+		$this->p1c              = $this->get_option( 'p1c' );
+		$this->p1ctext          = $this->get_option( 'p1ctext' ) ;
+		$this->p1curl           = $this->get_option( 'p1curl' );
 		$this->debug			= $this->settings['debug'];
 		
 		if ( 'yes' == $this->debug ) {
@@ -54,7 +57,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		global $woocommerce;
 		header("Content-type: text/plain");
 		if ( 'yes' == $this->debug ) {
-					$this->log->add( 'universalpay', 'Checking notification is valid...' );
+			$this->log->add( 'universalpay', 'Checking notification is valid...' );
 		}
 		if ( !empty( $_REQUEST ) ) {
 						$json = file_get_contents('php://input') ;
@@ -89,7 +92,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 								$order_id = substr( $array->MERCHANT_OPERATION, 0, 8 );
 								$order = new WC_Order( $order_id );
 								if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '<' ) ) {
-									if ( $order->status == 'completed' )
+									if ( $order->status == 'processing' )
 										exit;
 								}
 								else
@@ -112,13 +115,13 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 										}
 									}
 								}
-								$order->update_status( 'completed' );
+								$order->update_status( 'processing' );
 								if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '<' ) ) {
 									$order->reduce_order_stock();
 								}
 								else
 								{
-									$order->wc_reduce_stock_levels();
+									wc_reduce_stock_levels($order_id);
 								}
 								$woocommerce->cart->empty_cart();
 								$order->add_order_note( sprintf( __( 'Pedido completo, codigo %s', "universalpay_gw_woo" ), $array->MERCHANT_OPERATION ) );
@@ -135,16 +138,25 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 							$order = new WC_Order( $order_id );
 							$order->update_status('cancelled');
 							$order->add_order_note( sprintf( __( 'Payment error, code %s', "universalpay_gw_woo" ), $array->PAYMENT_CODE ) );
+							if ( 'yes' == $this->debug ) {
+								$this->log->add( 'universalpay', 'Received data: ' . print_r($array, true) );
+							}
 							die('OK');
 						};
 					}
 					else
 					{
-					die('KO');
+						if ( 'yes' == $this->debug ) {
+							$this->log->add( 'universalpay', 'datos recibido array vacio: ' . print_r($array, true) );
+						}
+						die('OK');
 					}
 		}
 		else
 		{
+			if ( 'yes' == $this->debug ) {
+				$this->log->add( 'universalpay', 'datos recibido vacio: ' . print_r($array, true) );
+			}
 			die('KO');
 		}
 	}
@@ -228,6 +240,24 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 						'label' => __( 'Indica si queremos pedir el nombre del titular de la tarjeta', "universalpay_gw_woo"),
 						'default' => 'no'
 				),
+				'p1c' => array(
+						'title' => __( 'Habilitar pago en 1 click', "universalpay_gw_woo"),
+						'type' => 'checkbox',
+						'label' => __( 'Indica si queremos activar la opción de pago en 1 click, solo usuarios registrados', "universalpay_gw_woo"),
+						'default' => 'no'
+				),
+				'p1ctext' => array(
+						'title' => __( 'url aceptación pago en 1 click', "universalpay_gw_woo"),
+						'type' => 'text',
+						'label' => __( 'url donde el cliente podrá ver las condiciones legales para guardar la tarjeta', "universalpay_gw_woo"),
+						'default' => 'Deseo guardar mi tarjeta para futuros pagos'
+				),
+				'p1curl' => array(
+						'title' => __( 'url aceptación pago en 1 click', "universalpay_gw_woo"),
+						'type' => 'text',
+						'label' => __( 'Texto que aparecerá para aceptar guardar la tarjeta', "universalpay_gw_woo"),
+						'default' => 'https://'
+				),
 				'debug' => array(
 						'title' => __( 'Debug Log', 'universalpay_gw_woo' ),
 						'type' => 'checkbox',
@@ -310,16 +340,29 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		} else {
 			$cardholder= 'true';
 		}
-		$locale="ES";
-		if ($order->get_customer_id() <> 0)
+		$locale= strtoupper(substr (get_locale(), 0, 2));
+		$p1c_text = "";
+		$p1c_url = "";
+		$activa1click ="";
+		if ($servired_args['p1c'] = true)
 		{
-			$codcliente = $order->get_customer_id();
-			$activa1click = "true";
+			if ($order->get_customer_id() <> 0)
+			{
+				$codcliente = $order->get_customer_id();
+				$activa1click = "true";
+				$p1c_text = $servired_args['p1ctext'];
+				$p1c_url = $servired_args['p1curl'];
+			}
+			else
+			{
+				$codcliente = "";
+				$activa1click = "false";
+			}
 		}
 		else
 		{
 			$codcliente = "";
-			$activa1click = "false";
+			$activa1click = "false";			
 		}
 		$params = array (
 			 "STYLE_BACK_BOTON" => $fondoboton,
@@ -334,8 +377,8 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 			 "TARGET" => "_parent",
 			 "PERSONAL_IDENTITY_NUMBER" => $codcliente,
 			 "P1C" => $activa1click,
-			 "P1C_TEXT" => "Acepto que mi tarjeta sea guardada para futuros pagos",
-			 "P1C_LINK" => "https://" . parse_url(get_permalink(), PHP_URL_HOST) . "/aviso-legal/"			 
+			 "P1C_TEXT" => $p1c_text,
+			 "P1C_LINK" => $p1c_url		 
 	   );
 
 	   $data = array (
@@ -346,6 +389,8 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 			 "URL_OK" => $url_ok,
 			 "URL_KO" => $url_ko,
 			 "DESCRIPTION" => $description,
+			 "LOCALE" => $locale,
+			 "CURRENCY" => $servired_args['Ds_Merchant_Currency'],
 			 "PARAMS" => $params 
 	   );
    
@@ -375,8 +420,8 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		   
 		   $result_string = json_decode ( $response, TRUE );
  if ( 'yes' == $this->debug ) {
-				$this->log->add( 'imsolutions', 'Datos resultado token: ' . print_r($result_string, true) );
-				$this->log->add( 'imsolutions', 'Datos enviados: ' . print_r($data, true) );
+				$this->log->add( 'universalpay', 'Datos resultado token: ' . print_r($result_string, true) );
+				$this->log->add( 'universalpay', 'Datos enviados: ' . print_r($data, true) );
 			}
 		   $token = $result_string ["TOKEN"];
 		   if ($token <> "")
@@ -385,7 +430,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
    
       <iframe id="framePago"
          style="width: 80%;margin-left:10%;height: 800px; border: none; text-align: center; padding: 0px;display:none"
-         name="ventana" scrolling="no"></iframe>
+         name="ventana" scrolling="no" sandbox="allow-same-origin allow-forms allow-top-navigation allow-scripts allow-popups"></iframe>
    
 <?php
 if ( $this->test == 'yes' ) {
@@ -425,11 +470,12 @@ function pagarPasarela() {
 
 		$order_id = $order->get_order_number();
 		$ds_order = str_pad($order->get_order_number(), 8, "0", STR_PAD_LEFT) . date('is');
-		
+		$curr = get_woocommerce_currency();
+		$moneda = $this->isos_code_currency($curr);
 		$message =  $order->get_total()*100 .
 		$ds_order .
 		$this->commerce .
-		"978" .
+		$moneda .
 		$this->key;
 			
 		$signature = strtoupper(sha1($message));
@@ -449,14 +495,14 @@ function pagarPasarela() {
 		} else {
 			$products = __('Online order', 'WC_universalpay_Gateway');
 		}
-		$vowels = array("+", "/", "\\","'","?","¿");
+		$vowels = array("+", "/", "\\","'","?","¿","!","¡");
 		$products = str_replace($vowels, " " , $products);
 		if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) )
 		{
 			$args = array (
 					'Ds_Merchant_MerchantCode'			=> $this->commerce,
 					'Ds_Merchant_Terminal'				=> 1,
-					'Ds_Merchant_Currency'				=> 978,
+					'Ds_Merchant_Currency'				=> $moneda,
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
@@ -473,6 +519,9 @@ function pagarPasarela() {
 					'nombre'							=> $this->nombre,
 					'limporte'							=> $this->limporte,
 					'lconcepto'							=> $this->lconcepto,
+					'p1ctext'							=> $this->p1ctext,
+					'p1curl'							=> $this->p1curl,
+					'p1c'								=> $this->p1c,
 				
 			);
 		}
@@ -481,7 +530,7 @@ function pagarPasarela() {
 			$args = array (
 					'Ds_Merchant_MerchantCode'			=> $this->commerce,
 					'Ds_Merchant_Terminal'				=> 1,
-					'Ds_Merchant_Currency'				=> 978,
+					'Ds_Merchant_Currency'				=> $moneda,
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
@@ -498,6 +547,9 @@ function pagarPasarela() {
 					'nombre'							=> $this->nombre,
 					'limporte'							=> $this->limporte,
 					'lconcepto'							=> $this->lconcepto,
+					'p1ctext'							=> $this->p1ctext,
+					'p1curl'							=> $this->p1curl,
+					'p1c'								=> $this->p1c,
 			);
 		}
 		if ( 'yes' == $this->debug ) {
@@ -527,5 +579,292 @@ function pagarPasarela() {
 					'redirect'	=> $redirect_url
 		);
     }
+	
+	function isos_code_currency( $pais)	{
+		
+	$codigo = array('AFN'=>'971',
+	'EUR'=>'978',
+	'ALL'=>'008',
+	'DZD'=>'012',
+	'USD'=>'840',
+	'EUR'=>'978',
+	'AOA'=>'973',
+	'XCD'=>'951',
+	'XCD'=>'951',
+	'ARS'=>'032',
+	'AMD'=>'051',
+	'AWG'=>'533',
+	'AUD'=>'036',
+	'EUR'=>'978',
+	'AZN'=>'944',
+	'BSD'=>'044',
+	'BHD'=>'048',
+	'BDT'=>'050',
+	'BBD'=>'052',
+	'BYN'=>'933',
+	'EUR'=>'978',
+	'BZD'=>'084',
+	'XOF'=>'952',
+	'BMD'=>'060',
+	'INR'=>'356',
+	'BTN'=>'064',
+	'BOB'=>'068',
+	'BOV'=>'984',
+	'USD'=>'840',
+	'BAM'=>'977',
+	'BWP'=>'072',
+	'NOK'=>'578',
+	'BRL'=>'986',
+	'USD'=>'840',
+	'BND'=>'096',
+	'BGN'=>'975',
+	'XOF'=>'952',
+	'BIF'=>'108',
+	'CVE'=>'132',
+	'KHR'=>'116',
+	'XAF'=>'950',
+	'CAD'=>'124',
+	'KYD'=>'136',
+	'XAF'=>'950',
+	'XAF'=>'950',
+	'CLP'=>'152',
+	'CLF'=>'990',
+	'CNY'=>'156',
+	'AUD'=>'036',
+	'AUD'=>'036',
+	'COP'=>'170',
+	'COU'=>'970',
+	'KMF'=>'174',
+	'CDF'=>'976',
+	'XAF'=>'950',
+	'NZD'=>'554',
+	'CRC'=>'188',
+	'XOF'=>'952',
+	'HRK'=>'191',
+	'CUP'=>'192',
+	'CUC'=>'931',
+	'ANG'=>'532',
+	'EUR'=>'978',
+	'CZK'=>'203',
+	'DKK'=>'208',
+	'DJF'=>'262',
+	'XCD'=>'951',
+	'DOP'=>'214',
+	'USD'=>'840',
+	'EGP'=>'818',
+	'SVC'=>'222',
+	'USD'=>'840',
+	'XAF'=>'950',
+	'ERN'=>'232',
+	'EUR'=>'978',
+	'SZL'=>'748',
+	'ETB'=>'230',
+	'EUR'=>'978',
+	'FKP'=>'238',
+	'DKK'=>'208',
+	'FJD'=>'242',
+	'EUR'=>'978',
+	'EUR'=>'978',
+	'EUR'=>'978',
+	'XPF'=>'953',
+	'EUR'=>'978',
+	'XAF'=>'950',
+	'GMD'=>'270',
+	'GEL'=>'981',
+	'EUR'=>'978',
+	'GHS'=>'936',
+	'GIP'=>'292',
+	'EUR'=>'978',
+	'DKK'=>'208',
+	'XCD'=>'951',
+	'EUR'=>'978',
+	'USD'=>'840',
+	'GTQ'=>'320',
+	'GBP'=>'826',
+	'GNF'=>'324',
+	'XOF'=>'952',
+	'GYD'=>'328',
+	'HTG'=>'332',
+	'USD'=>'840',
+	'AUD'=>'036',
+	'EUR'=>'978',
+	'HNL'=>'340',
+	'HKD'=>'344',
+	'HUF'=>'348',
+	'ISK'=>'352',
+	'INR'=>'356',
+	'IDR'=>'360',
+	'XDR'=>'960',
+	'IRR'=>'364',
+	'IQD'=>'368',
+	'EUR'=>'978',
+	'GBP'=>'826',
+	'ILS'=>'376',
+	'EUR'=>'978',
+	'JMD'=>'388',
+	'JPY'=>'392',
+	'GBP'=>'826',
+	'JOD'=>'400',
+	'KZT'=>'398',
+	'KES'=>'404',
+	'AUD'=>'036',
+	'KPW'=>'408',
+	'KRW'=>'410',
+	'KWD'=>'414',
+	'KGS'=>'417',
+	'LAK'=>'418',
+	'EUR'=>'978',
+	'LBP'=>'422',
+	'LSL'=>'426',
+	'ZAR'=>'710',
+	'LRD'=>'430',
+	'LYD'=>'434',
+	'CHF'=>'756',
+	'EUR'=>'978',
+	'EUR'=>'978',
+	'MOP'=>'446',
+	'MKD'=>'807',
+	'MGA'=>'969',
+	'MWK'=>'454',
+	'MYR'=>'458',
+	'MVR'=>'462',
+	'XOF'=>'952',
+	'EUR'=>'978',
+	'USD'=>'840',
+	'EUR'=>'978',
+	'MRU'=>'929',
+	'MUR'=>'480',
+	'EUR'=>'978',
+	'XUA'=>'965',
+	'MXN'=>'484',
+	'MXV'=>'979',
+	'USD'=>'840',
+	'MDL'=>'498',
+	'EUR'=>'978',
+	'MNT'=>'496',
+	'EUR'=>'978',
+	'XCD'=>'951',
+	'MAD'=>'504',
+	'MZN'=>'943',
+	'MMK'=>'104',
+	'NAD'=>'516',
+	'ZAR'=>'710',
+	'AUD'=>'036',
+	'NPR'=>'524',
+	'EUR'=>'978',
+	'XPF'=>'953',
+	'NZD'=>'554',
+	'NIO'=>'558',
+	'XOF'=>'952',
+	'NGN'=>'566',
+	'NZD'=>'554',
+	'AUD'=>'036',
+	'USD'=>'840',
+	'NOK'=>'578',
+	'OMR'=>'512',
+	'PKR'=>'586',
+	'USD'=>'840',
+	'PAB'=>'590',
+	'USD'=>'840',
+	'PGK'=>'598',
+	'PYG'=>'600',
+	'PEN'=>'604',
+	'PHP'=>'608',
+	'NZD'=>'554',
+	'PLN'=>'985',
+	'EUR'=>'978',
+	'USD'=>'840',
+	'QAR'=>'634',
+	'EUR'=>'978',
+	'RON'=>'946',
+	'RUB'=>'643',
+	'RWF'=>'646',
+	'EUR'=>'978',
+	'SHP'=>'654',
+	'XCD'=>'951',
+	'XCD'=>'951',
+	'EUR'=>'978',
+	'EUR'=>'978',
+	'XCD'=>'951',
+	'WST'=>'882',
+	'EUR'=>'978',
+	'STN'=>'930',
+	'SAR'=>'682',
+	'XOF'=>'952',
+	'RSD'=>'941',
+	'SCR'=>'690',
+	'SLL'=>'694',
+	'SGD'=>'702',
+	'ANG'=>'532',
+	'XSU'=>'994',
+	'EUR'=>'978',
+	'EUR'=>'978',
+	'SBD'=>'090',
+	'SOS'=>'706',
+	'ZAR'=>'710',
+	'SSP'=>'728',
+	'EUR'=>'978',
+	'LKR'=>'144',
+	'SDG'=>'938',
+	'SRD'=>'968',
+	'NOK'=>'578',
+	'SEK'=>'752',
+	'CHF'=>'756',
+	'CHE'=>'947',
+	'CHW'=>'948',
+	'SYP'=>'760',
+	'TWD'=>'901',
+	'TJS'=>'972',
+	'TZS'=>'834',
+	'THB'=>'764',
+	'USD'=>'840',
+	'XOF'=>'952',
+	'NZD'=>'554',
+	'TOP'=>'776',
+	'TTD'=>'780',
+	'TND'=>'788',
+	'TRY'=>'949',
+	'TMT'=>'934',
+	'USD'=>'840',
+	'AUD'=>'036',
+	'UGX'=>'800',
+	'UAH'=>'980',
+	'AED'=>'784',
+	'GBP'=>'826',
+	'USD'=>'840',
+	'USD'=>'840',
+	'USN'=>'997',
+	'UYU'=>'858',
+	'UYI'=>'940',
+	'UYW'=>'927',
+	'UZS'=>'860',
+	'VUV'=>'548',
+	'VES'=>'928',
+	'VND'=>'704',
+	'USD'=>'840',
+	'USD'=>'840',
+	'XPF'=>'953',
+	'MAD'=>'504',
+	'YER'=>'886',
+	'ZMW'=>'967',
+	'ZWL'=>'932',
+	'XBA'=>'955',
+	'XBB'=>'956',
+	'XBC'=>'957',
+	'XBD'=>'958',
+	'XTS'=>'963',
+	'XXX'=>'999',
+	'XAU'=>'959',
+	'XPD'=>'964',
+	'XPT'=>'962',
+	'XAG'=>'961');
+
+	foreach ($codigo as $k => $v) {
+      if ($k == $pais) 
+		  return $v;
+		}
+	} 
+	
+
 
 }

@@ -6,7 +6,7 @@ Tags: woocommerce, servired, universalpay, credit card, martercard, visa, ecomme
 
 Requires at least: 3.5
 
-Tested up to: 4.7.3
+Tested up to: 5.4.2
 
 Stable tag: 1.1.9
 

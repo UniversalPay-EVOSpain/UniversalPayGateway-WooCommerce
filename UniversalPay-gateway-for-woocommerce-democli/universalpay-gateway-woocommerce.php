@@ -4,7 +4,7 @@ Plugin Name: UniversalPay Gateway for WooCommerce
 Plugin URI: https://www.universalpay.es/
 Description: This plugins allows to users to include UniversalPay at payment method
 Author: jbartolome
-Version: 1.2.0
+Version: 1.3.0
 Author URI: https://www.universalpay.es/
 */
 
