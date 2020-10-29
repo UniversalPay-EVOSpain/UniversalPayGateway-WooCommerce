@@ -6,6 +6,8 @@ Description: This plugins allows to users to include UniversalPay at payment met
 Author: jbartolome
 Version: 1.3.0
 Author URI: https://www.universalpay.es/
+Text Domain: universalpay_gw_woo
+Domain Path: /languages
 */
 
 add_action( 'plugins_loaded', 'universalpay_plugins_loaded' );

@@ -31,6 +31,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		$this->p1c              = $this->get_option( 'p1c' );
 		$this->p1ctext          = $this->get_option( 'p1ctext' ) ;
 		$this->p1curl           = $this->get_option( 'p1curl' );
+		$this->estado           = $this->get_option( 'estado' );
 		$this->debug			= $this->settings['debug'];
 		
 		if ( 'yes' == $this->debug ) {
@@ -46,7 +47,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 			add_action( 'woocommerce_update_options_payment_gateways', array( $this, 'process_admin_options' ) );
 		}else{
 			add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ), array( $this, 'universalpay_ipn_response' ) );
-			add_action('woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		}
 		
 		add_action( 'woocommerce_receipt_universalpay', array( $this, 'receipt_page' ) );
@@ -92,13 +93,10 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 								$order_id = substr( $array->MERCHANT_OPERATION, 0, 8 );
 								$order = new WC_Order( $order_id );
 								if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '<' ) ) {
-									if ( $order->status == 'processing' )
+									if ( $order->status == $this->estado )
 										exit;
 								}
-								else
-								{
-									
-								}
+								
 								$virtual_order = null;
 					 
 								if ( count( $order->get_items() ) > 0 ) {
@@ -115,7 +113,7 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 										}
 									}
 								}
-								$order->update_status( 'processing' );
+								$order->update_status( $this->estado );
 								if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '<' ) ) {
 									$order->reduce_order_stock();
 								}
@@ -136,7 +134,8 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 						else{
 							$order_id = substr( $array->MERCHANT_OPERATION, 0, 8 );
 							$order = new WC_Order( $order_id );
-							$order->update_status('cancelled');
+							if ( $order->status <> $this->estado )
+								$order->update_status('cancelled');
 							$order->add_order_note( sprintf( __( 'Payment error, code %s', "universalpay_gw_woo" ), $array->PAYMENT_CODE ) );
 							if ( 'yes' == $this->debug ) {
 								$this->log->add( 'universalpay', 'Received data: ' . print_r($array, true) );
@@ -258,6 +257,21 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 						'label' => __( 'Texto que aparecerá para aceptar guardar la tarjeta', "universalpay_gw_woo"),
 						'default' => 'https://'
 				),
+				'estado' => array(
+						'title' =>__( 'Estado del pedido después del pago', "universalpay_gw_woo"),
+						'type' => 'select',
+						'label' => __( 'Estado que se asignara al pedido después de haber pagado', "universalpay_gw_woo"),
+						'default' => 'processing',
+						'options' => array(
+							'cancelled' => 'cancelled',
+							'completed' => 'completed',
+							'failed' => 'failed',
+							'pending' => 'pending',
+							'processing' => 'processing',
+							'refunded' => 'refunded',
+							'shipped' => 'shipped'
+							)
+				),
 				'debug' => array(
 						'title' => __( 'Debug Log', 'universalpay_gw_woo' ),
 						'type' => 'checkbox',
@@ -344,11 +358,22 @@ class WC_universalpay_Gateway extends WC_Payment_Gateway {
 		$p1c_text = "";
 		$p1c_url = "";
 		$activa1click ="";
-		if ($servired_args['p1c'] = true)
+		
+		if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '<' ) ) {
+			$user_id = get_post_meta($order_id, '_customer_user', true);
+		}
+		else
 		{
-			if ($order->get_customer_id() <> 0)
+			$user_id = $order->get_customer_id();
+		}
+
+		
+		
+		if ($servired_args['p1c'] == 'yes')
+		{
+			if ($user_id <> 0)
 			{
-				$codcliente = $order->get_customer_id();
+				$codcliente = $user_id;
 				$activa1click = "true";
 				$p1c_text = $servired_args['p1ctext'];
 				$p1c_url = $servired_args['p1curl'];
@@ -495,8 +520,9 @@ function pagarPasarela() {
 		} else {
 			$products = __('Online order', 'WC_universalpay_Gateway');
 		}
-		$vowels = array("+", "/", "\\","'","?","¿","!","¡");
+		$vowels = array("+", "/", "\\","'","?","¿","!","¡","$","%","&","=","(",")",".",";",":","-","_","*","+");
 		$products = str_replace($vowels, " " , $products);
+		$urlKOKO = "https://yamnaya.es/pago-rechazado/";
 		if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) )
 		{
 			$args = array (
@@ -506,12 +532,12 @@ function pagarPasarela() {
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
-					'Ds_Merchant_UrlKO'					=> apply_filters( 'woouniversalpay_param_urlKO', get_permalink( wc_get_page_id( 'checkout' ) ) ),
+					'Ds_Merchant_UrlKO'					=> $urlKOKO,
 					'Ds_Merchant_UrlOK'					=> apply_filters( 'woouniversalpay_param_urlOK', $this->get_return_url( $order ) ),
 					'Ds_Merchant_Titular'				=> $this->owner,
 					'Ds_Merchant_MerchantName'			=> $this->merchantName,
 					'Ds_Merchant_Amount'				=> round($order->get_total()*100),
-					'Ds_Merchant_ProductDescription'	=> $products,
+					'Ds_Merchant_ProductDescription'	=> "",
 					'Ds_Merchant_Order'					=> $ds_order,
 					'fondoboton'						=> $this->fondoboton,
 					'textoboton'						=> $this->textoboton,
@@ -534,12 +560,12 @@ function pagarPasarela() {
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
-					'Ds_Merchant_UrlKO'					=> apply_filters( 'woouniversalpay_param_urlKO', get_permalink( woocommerce_get_page_id( 'checkout' ) ) ),
+					'Ds_Merchant_UrlKO'					=> $urlKOKO,
 					'Ds_Merchant_UrlOK'					=> apply_filters( 'woouniversalpay_param_urlOK', $this->get_return_url( $order ) ),
 					'Ds_Merchant_Titular'				=> $this->owner,
 					'Ds_Merchant_MerchantName'			=> $this->merchantName,
 					'Ds_Merchant_Amount'				=> round($order->get_total()*100),
-					'Ds_Merchant_ProductDescription'	=> $products,
+					'Ds_Merchant_ProductDescription'	=> "",
 					'Ds_Merchant_Order'					=> $ds_order,
 					'fondoboton'						=> $this->fondoboton,
 					'textoboton'						=> $this->textoboton,
