@@ -522,7 +522,7 @@ function pagarPasarela() {
 		}
 		$vowels = array("+", "/", "\\","'","?","¿","!","¡","$","%","&","=","(",")",".",";",":","-","_","*","+");
 		$products = str_replace($vowels, " " , $products);
-		$urlKOKO = "https://yamnaya.es/pago-rechazado/";
+		
 		if ( version_compare( WOOCOMMERCE_VERSION, '3.0', '>=' ) )
 		{
 			$args = array (
@@ -532,7 +532,7 @@ function pagarPasarela() {
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
-					'Ds_Merchant_UrlKO'					=> $urlKOKO,
+					'Ds_Merchant_UrlKO'					=> apply_filters( 'woouniversalpay_param_urlKO', get_permalink( wc_get_page_id( 'checkout' ) ) ),
 					'Ds_Merchant_UrlOK'					=> apply_filters( 'woouniversalpay_param_urlOK', $this->get_return_url( $order ) ),
 					'Ds_Merchant_Titular'				=> $this->owner,
 					'Ds_Merchant_MerchantName'			=> $this->merchantName,
@@ -560,7 +560,7 @@ function pagarPasarela() {
 					'Ds_Merchant_MerchantURL'			=> add_query_arg( 'wc-api', 'WC_universalpay_Gateway', home_url( '/' ) ),
 					'Ds_Merchant_TransactionType'		=> 0,
 					'Ds_Merchant_MerchantSignature'		=> $signature,
-					'Ds_Merchant_UrlKO'					=> $urlKOKO,
+					'Ds_Merchant_UrlKO'					=> apply_filters( 'woouniversalpay_param_urlKO', get_permalink( woocommerce_get_page_id( 'checkout' ) ) ),
 					'Ds_Merchant_UrlOK'					=> apply_filters( 'woouniversalpay_param_urlOK', $this->get_return_url( $order ) ),
 					'Ds_Merchant_Titular'				=> $this->owner,
 					'Ds_Merchant_MerchantName'			=> $this->merchantName,
