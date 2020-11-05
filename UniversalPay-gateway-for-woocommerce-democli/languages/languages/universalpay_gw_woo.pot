@@ -1,0 +1,228 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Javier Bartolome
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: universalpay_gw_woo 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-07-14 22:56+0200\n"
+"PO-Revision-Date: 2020-07-14 23:08+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Eazy Po 0.9.5.3\n"
+
+#: class-wc-universalpay-gateway.php:10 class-wc-universalpay-gateway.php:175
+msgid "universalpay"
+msgstr "universalpay"
+
+#: class-wc-universalpay-gateway.php:125
+#, php-format
+msgid "Pedido completo, codigo %s"
+msgstr "Comanda complet, codi %s"
+
+#: class-wc-universalpay-gateway.php:126
+#, php-format
+msgid "Método de pago %s"
+msgstr "Mètode de pagament %s"
+
+#: class-wc-universalpay-gateway.php:129
+#, php-format
+msgid "titular tarjeta %s"
+msgstr "titular targeta %s"
+
+#: class-wc-universalpay-gateway.php:138
+#, php-format
+msgid "Payment error, code %s"
+msgstr "Codi d'error %s"
+
+#: class-wc-universalpay-gateway.php:166
+msgid "Enable/Disable"
+msgstr "activar/desactivar"
+
+#: class-wc-universalpay-gateway.php:168
+msgid "Enable universalpay"
+msgstr "Activar universalpay"
+
+#: class-wc-universalpay-gateway.php:172
+msgid "Title"
+msgstr "Títol"
+
+#: class-wc-universalpay-gateway.php:174
+msgid "This title is showed in checkout process."
+msgstr "Aquest text és mostrat in el procés de venda"
+
+#: class-wc-universalpay-gateway.php:179
+msgid "Description"
+msgstr "Descripció"
+
+#: class-wc-universalpay-gateway.php:181
+msgid ""
+"Descripción del método de pago. Información para los usuarios sobre las "
+"opciones de pago."
+msgstr ""
+"Descripció de l'mètode de pagament. Informació per als usuaris sobre les "
+"opcions de pagament."
+
+#: class-wc-universalpay-gateway.php:182
+msgid "Pago con tarjeta"
+msgstr "Pagament amb targeta"
+
+#: class-wc-universalpay-gateway.php:185
+msgid "Owner"
+msgstr "Titular"
+
+#: class-wc-universalpay-gateway.php:190
+msgid "Trade name"
+msgstr "Nom registre"
+
+#: class-wc-universalpay-gateway.php:195
+msgid "Trade number"
+msgstr "Número registre"
+
+#: class-wc-universalpay-gateway.php:200
+msgid "Secret key"
+msgstr "clau"
+
+#: class-wc-universalpay-gateway.php:202
+msgid "Clave de cifrado."
+msgstr "Clau de xifrat"
+
+#: class-wc-universalpay-gateway.php:206
+msgid "Test Mode"
+msgstr "Mode test"
+
+#: class-wc-universalpay-gateway.php:208
+msgid "Habilitar universalpay en modo test."
+msgstr "Habilitar universalpay en mode test"
+
+#: class-wc-universalpay-gateway.php:212
+msgid "Color Fondo Boton"
+msgstr "Color Fons Botó"
+
+#: class-wc-universalpay-gateway.php:214
+msgid "Color para el fondo del boton de pago"
+msgstr "Color per al fons de el botó de pagament"
+
+#: class-wc-universalpay-gateway.php:218
+msgid "Color Texto Boton"
+msgstr "Color Text Botó"
+
+#: class-wc-universalpay-gateway.php:220
+msgid "Color para el texto del boton de pago"
+msgstr "Color per al text de el botó de pagament"
+
+#: class-wc-universalpay-gateway.php:224
+msgid "Color fondo iframe"
+msgstr "Color fons iframe"
+
+#: class-wc-universalpay-gateway.php:226
+msgid "Color para el fondo del iframe"
+msgstr "Color per al fons de l'iframe"
+
+#: class-wc-universalpay-gateway.php:230
+msgid "Mensaje métodos de pago"
+msgstr "Missatge mètodes de pagament"
+
+#: class-wc-universalpay-gateway.php:232
+msgid "Mensaje que aparecerá encima de los métodos de pago"
+msgstr "Missatge que apareixerà sobre dels mètodes de pagament"
+
+#: class-wc-universalpay-gateway.php:236
+msgid "Nombre del titular de la tarjeta"
+msgstr "Nom de titular de la targeta"
+
+#: class-wc-universalpay-gateway.php:238
+msgid "Indica si queremos pedir el nombre del titular de la tarjeta"
+msgstr "Indica si volem demanar el nom de la titular de la targeta"
+
+#: class-wc-universalpay-gateway.php:242
+msgid "Habilitar pago en 1 click"
+msgstr "Habilitar pagament en 1 click"
+
+#: class-wc-universalpay-gateway.php:244
+msgid ""
+"Indica si queremos activar la opción de pago en 1 click, solo usuarios "
+"registrados"
+msgstr ""
+"Indica si volem activar l'opció de pagament en 1 click, només usuaris "
+"registrats"
+
+#: class-wc-universalpay-gateway.php:248 class-wc-universalpay-gateway.php:254
+msgid "url aceptación pago en 1 click"
+msgstr "URL acceptació pagament en 1 click"
+
+#: class-wc-universalpay-gateway.php:250
+msgid ""
+"url donde el cliente podrá ver las condiciones legales para guardar la "
+"tarjeta"
+msgstr ""
+"url on el client podrà veure les condicions legals per a guardar la targeta"
+
+#: class-wc-universalpay-gateway.php:256
+msgid "Texto que aparecerá para aceptar guardar la tarjeta"
+msgstr "Text que apareixerà per acceptar guardar la targeta"
+
+#: class-wc-universalpay-gateway.php:260
+msgid "Estado del pedido después del pago"
+msgstr "Estat de la comanda després de l'pagament"
+
+#: class-wc-universalpay-gateway.php:262
+msgid "Estado que se asignara al pedido después de haber pagado"
+msgstr "Estat que s'assignés a la comanda després d'haver pagat"
+
+#: class-wc-universalpay-gateway.php:275
+msgid "Debug Log"
+msgstr "Tracear log"
+
+#: class-wc-universalpay-gateway.php:277
+msgid "Enable logging"
+msgstr "Habilitar log"
+
+#: class-wc-universalpay-gateway.php:279
+#, php-format
+msgid "Log UniversalPay events, inside %s"
+msgstr "esdeveniments de l'log universalpay, en %s"
+
+#: class-wc-universalpay-gateway.php:286
+msgid "universalpay Payment"
+msgstr "universalpay Payment"
+
+#: class-wc-universalpay-gateway.php:287
+msgid "Allows universalpay card payments."
+msgstr "Permetre pagament amb targeta universalpay"
+
+#: class-wc-universalpay-gateway.php:311
+msgid "You must fill out a title for this gateway"
+msgstr "Has omplir un títol per a la passarel·la"
+
+#: class-wc-universalpay-gateway.php:312
+msgid "You must fill out a description for this gateway"
+msgstr "Has omplir una descripció per a la passarel·la"
+
+#: class-wc-universalpay-gateway.php:313
+msgid "You must fill out who is the owner"
+msgstr "Has d'emplenar qui és l'amo"
+
+#: class-wc-universalpay-gateway.php:314
+msgid "You must fill out the merchant name"
+msgstr "Has d'emplenar el nom de el comerç"
+
+#: class-wc-universalpay-gateway.php:315
+msgid "You must fill out the merchant number"
+msgstr "Has d'emplenar l'identificador de el comerç"
+
+#: class-wc-universalpay-gateway.php:316
+msgid "You must fill out the key"
+msgstr "Has d'emplenar la clau"
+
+#: class-wc-universalpay-gateway.php:520
+msgid "Online order"
+msgstr "Comanda en línia"
